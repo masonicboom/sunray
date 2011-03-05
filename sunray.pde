@@ -1,5 +1,6 @@
 import processing.opengl.*;
 import javax.media.opengl.*;
+import processing.video.*;
 
 
 float THICKNESS = 11.0;
@@ -10,11 +11,18 @@ float da = TWO_PI/1200.0; // change in angle with respect to time
 
 Sun[] suns = new Sun[1];
 
+MovieMaker mm;
+boolean SAVE_VIDEO = true;
+int FPS = 60;
+
 
 void setup() {
   size(400, 400);
-  frameRate(60.0);
+  frameRate(FPS);
   smooth();
+  
+  if (SAVE_VIDEO)
+    mm = new MovieMaker(this, width, height, "screencap.mov", FPS, MovieMaker.RAW, MovieMaker.LOSSLESS);
   
   for (int i = 0; i < suns.length; i++) {
     int num_rays = round(random(40, 60));
@@ -36,6 +44,17 @@ void draw() {
   }
   
   t += dt;
+  
+  if (SAVE_VIDEO)
+    mm.addFrame();
+}
+
+
+// this function saves the video when you hit spacebar
+void keyPressed() {
+  if (key == ' ' && SAVE_VIDEO) {
+    mm.finish();
+  }
 }
 
 
